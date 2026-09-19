@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Start · Astana</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F2F4F7;
+      --card: #FFFFFF;
+      --ink: #15203A;
+      --muted: #616C86;
+      --line: #D8DEE9;
+      --accent: #2456C7;
+      --good: #1F9D6A; --fair: #7CB342; --mod: #E0A800; --poor: #E8791D; --vpoor: #C93C3C; --xpoor: #7B1E7B;
+      --font: "Manrope", "Segoe UI", system-ui, sans-serif;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) { --bg: #0F1524; --card: #182036; --ink: #E8ECF5; --muted: #98A4C0; --line: #2A3450; --accent: #7B93FF; }
+    }
+    :root[data-theme="dark"] { --bg: #0F1524; --card: #182036; --ink: #E8ECF5; --muted: #98A4C0; --line: #2A3450; --accent: #7B93FF; }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.45; }
+    main { max-width: 1080px; margin: 0 auto; padding: 28px 20px 48px; }
+
+    /* ---------- header ---------- */
+    .top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; margin-bottom: 18px; }
+    .clock { font-size: 3.2rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+    .clock small { font-size: 1rem; color: var(--muted); font-weight: 500; margin-left: 10px; }
+    .date { color: var(--muted); font-size: 1rem; }
+    .search { flex: 1 1 260px; max-width: 420px; }
+    .search input {
+      width: 100%; font: inherit; padding: 10px 14px; border-radius: 999px;
+      border: 1px solid var(--line); background: var(--card); color: var(--ink);
+    }
+    .search input:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    /* ---------- cards ---------- */
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-bottom: 22px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; min-height: 120px; }
+    .card h2 { margin: 0 0 8px; font-size: 0.78rem; font-weight: 700; color: var(--muted); letter-spacing: 0.01em; }
+    .big { font-size: 2rem; font-weight: 700; line-height: 1.1; }
+    .big small { font-size: 0.95rem; font-weight: 500; color: var(--muted); margin-left: 6px; }
+    .kv { display: flex; justify-content: space-between; font-size: 0.9rem; padding: 3px 0; }
+    .kv span:last-child { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .muted { color: var(--muted); font-size: 0.85rem; }
+    .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; color: #fff; font-size: 0.8rem; font-weight: 700; }
+    textarea {
+      width: 100%; min-height: 70px; resize: vertical; font: inherit; color: var(--ink); background: var(--bg);
+      border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
+    }
+    textarea:focus { outline: none; border-color: var(--accent); }
+
+    /* ---------- links ---------- */
+    h3 { font-size: 0.85rem; font-weight: 700; color: var(--muted); margin: 22px 0 8px; padding-bottom: 6px; border-bottom: 2px solid var(--accent); }
+    .links { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+    .link {
+      display: block; background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+      padding: 10px 13px; color: inherit; text-decoration: none;
+    }
+    .link:hover, .link:focus-visible { border-color: var(--accent); outline: none; }
+    .link strong { display: block; font-weight: 700; font-size: 0.95rem; }
+    .link span { display: block; color: var(--muted); font-size: 0.78rem; margin-top: 1px; }
+    .link .del { float: right; color: var(--muted); font-size: 0.8rem; text-decoration: none; }
+    .hidden { display: none; }
+    .addrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .addrow input { flex: 1 1 140px; font: inherit; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+    .addrow button { font: inherit; font-weight: 500; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; }
+    footer { margin-top: 26px; color: var(--muted); font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <!-- ---------- header: clock, date, search ---------- -->
+    <div class="top">
+      <div>
+        <div class="clock"><span id="time">--:--</span><small id="tz">UTC+5</small></div>
+        <div class="date" id="date"></div>
+      </div>
+      <div class="search"><input id="q" type="search" placeholder="Search tools and links… (or Enter to search the web)" aria-label="Search"></div>
+    </div>
+
+    <!-- ---------- cards ---------- -->
+    <div class="cards">
+      <div class="card">
+        <h2>Weather in Astana</h2>
+        <div id="weather"><span class="muted">Loading…</span></div>
+      </div>
+      <div class="card">
+        <h2>Air quality</h2>
+        <div id="air"><span class="muted">Loading…</span></div>
+      </div>
+      <div class="card">
+        <h2>Tenge today</h2>
+        <div id="rates"><span class="muted">Loading…</span></div>
+      </div>
+      <div class="card">
+        <h2>Work calendar</h2>
+        <div id="cal"></div>
+      </div>
+      <div class="card">
+        <h2>Today's focus</h2>
+        <textarea id="focus" placeholder="One or two things that matter today"></textarea>
+      </div>
+    </div>
+
+    <!-- ---------- links ---------- -->
+    <h3>Tools</h3>
+    <div class="links" data-group="tools"></div>
+    <h3>Kazakhstan directories</h3>
+    <div class="links" data-group="dirs"></div>
+    <h3>Public services</h3>
+    <div class="links" data-group="services"></div>
+    <h3>My links</h3>
+    <div class="links" data-group="mine"></div>
+    <div class="addrow">
+      <input id="add-name" type="text" placeholder="Name">
+      <input id="add-url" type="url" placeholder="https://…">
+      <input id="add-note" type="text" placeholder="Note (optional)">
+      <button id="add" type="button">Add link</button>
+    </div>
+
+    <footer>Weather and air quality from Open-Meteo, rates from open.er-api.com, holidays computed from the Law on holidays (same rules as kz-workdays). Focus note and personal links are stored in this browser only.</footer>
+  </main>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const BASE = "https://ktwyw.github.io/";
+    const ZONE = "Asia/Almaty";
+    const LAT = 51.1694, LON = 71.4491;
+
+    // ---------- links (edit these to taste) ----------
+    const LINKS = {
+      tools: [
+        ["Astana time", BASE + "astana-time/", "clock, converter, meeting planner"],
+        ["Working days", BASE + "kz-workdays/", "count working days, holidays"],
+        ["Citation maker", BASE + "citation-maker/", "APA, Vancouver, GOST, BibTeX"],
+        ["Prompt builder", BASE + "prompt-builder/", "structured prompts, research templates"],
+        ["QR maker", BASE + "qr-maker/", "links and Wi-Fi codes"],
+        ["Health metrics", BASE + "health-metrics/", "BMI, BMR, water"],
+        ["Astana today", BASE + "astana-today/", "weather and rates dashboard"],
+        ["GitHub", "https://github.com/ktwyw", "all repositories"],
+      ],
+      dirs: [
+        ["Universities", BASE + "kz-universities/", "70 universities by region"],
+        ["Companies", BASE + "kz-companies/", "major companies by sector"],
+        ["Media", BASE + "kz-media/", "news sources with language filter"],
+        ["Government", BASE + "kz-gov/", "ministries, agencies, services"],
+      ],
+      services: [
+        ["eGov", "https://egov.kz", "certificates and services"],
+        ["Tax (KGD)", "https://kgd.gov.kz", "taxes and customs"],
+        ["Taxpayer cabinet", "https://cabinet.salyk.kz", "returns and payments"],
+        ["Courts", "https://sud.gov.kz", "cases and e-filing"],
+        ["Pension fund", "https://enpf.kz", "ENPF account"],
+        ["Adilet", "https://adilet.zan.kz", "laws and codes"],
+        ["National Bank", "https://nationalbank.kz", "official rates"],
+        ["Akorda", "https://www.akorda.kz", "president's office"],
+      ],
+    };
+
+    // ---------- time ----------
+    const parts = (d, opts) => Object.fromEntries(new Intl.DateTimeFormat("en-GB", { timeZone: ZONE, hourCycle: "h23", ...opts }).formatToParts(d).filter(p => p.type !== "literal").map(p => [p.type, p.value]));
+    function todayAstana() { const p = parts(new Date(), { year: "numeric", month: "2-digit", day: "2-digit" }); return { y: +p.year, m: +p.month, d: +p.day }; }
+    function tick() {
+      const now = new Date();
+      const p = parts(now, { hour: "2-digit", minute: "2-digit" });
+      $("time").textContent = `${p.hour}:${p.minute}`;
+      $("date").textContent = now.toLocaleDateString("en-GB", { timeZone: ZONE, weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    }
+    setInterval(tick, 1000); tick();
+
+    // ---------- holidays (same rules as kz-workdays) ----------
+    const FIXED = [
+      [1, 1, "New Year", true, null, null], [1, 2, "New Year", true, null, null], [1, 7, "Orthodox Christmas", false, null, null],
+      [3, 8, "International Women's Day", true, null, null], [3, 15, "Constitution Day", true, 2027, null],
+      [3, 21, "Nauryz", true, null, null], [3, 22, "Nauryz", true, null, null], [3, 23, "Nauryz", true, null, null],
+      [5, 1, "People's Unity Day", true, null, null], [5, 7, "Defender of the Fatherland Day", true, null, null], [5, 9, "Victory Day", true, null, null],
+      [7, 6, "Capital City Day", true, null, null], [8, 30, "Constitution Day", true, null, 2026], [10, 25, "Republic Day", true, null, null], [12, 16, "Independence Day", true, null, null],
+    ];
+    const KURBAN = { 2024: "2024-06-16", 2025: "2025-06-06", 2026: "2026-05-27", 2027: "2027-05-16", 2028: "2028-05-05" };
+    const TRANSFERS = {};
+    const mk = (y, m, d) => new Date(Date.UTC(y, m - 1, d));
+    const key = d => d.toISOString().slice(0, 10);
+    const dow = d => (d.getUTCDay() + 6) % 7;
+    const plus = (d, n) => new Date(d.getTime() + n * 86400000);
+    const wk = d => dow(d) >= 5;
+    const hcache = {};
+    function holidays(y) {
+      if (hcache[y]) return hcache[y];
+      const days = new Map(); const add = (d, n) => { if (!days.has(key(d))) days.set(key(d), n); };
+      const fixed = FIXED.filter(([, , , , a, b]) => (a === null || y >= a) && (b === null || y <= b));
+      for (const [m, d, n] of fixed) add(mk(y, m, d), n);
+      if (KURBAN[y]) add(new Date(KURBAN[y] + "T00:00:00Z"), "Kurban Ait");
+      for (const [m, d, n, moves] of fixed) { const h = mk(y, m, d); if (moves && wk(h)) { let x = plus(h, 1); while (wk(x) || days.has(key(x))) x = plus(x, 1); add(x, `Day off for ${n}`); } }
+      for (const off of Object.keys(TRANSFERS)) if (off.startsWith(y)) add(new Date(off + "T00:00:00Z"), "Transferred day off");
+      return hcache[y] = new Map([...days].sort());
+    }
+    const isWorking = d => !holidays(d.getUTCFullYear()).has(key(d)) && (Object.values(TRANSFERS).includes(key(d)) || !wk(d));
+
+    function renderCal() {
+      const t = todayAstana(); const today = mk(t.y, t.m, t.d);
+      const last = mk(t.y, t.m + 1, 0);
+      let left = 0; for (let d = today; d <= last; d = plus(d, 1)) if (isWorking(d)) left++;
+      let total = 0; for (let d = mk(t.y, t.m, 1); d <= last; d = plus(d, 1)) if (isWorking(d)) total++;
+      let next = null;
+      for (const y of [t.y, t.y + 1]) for (const [k, n] of holidays(y)) { const d = new Date(k + "T00:00:00Z"); if (d >= today && !wk(d)) { next = [d, n]; break; } if (next) break; }
+      const todayName = holidays(t.y).get(key(today));
+      const daysTo = next ? Math.round((next[0] - today) / 86400000) : null;
+      $("cal").innerHTML = `
+        <div class="big">${left}<small>working days left in ${today.toLocaleDateString("en-GB", { month: "long", timeZone: "UTC" })} (of ${total})</small></div>
+        <div class="kv" style="margin-top:8px"><span>Today</span><span>${todayName ? todayName : (wk(today) ? "weekend" : "working day")}</span></div>
+        ${next ? `<div class="kv"><span>Next day off</span><span>${next[0].toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" })}</span></div><div class="muted">${next[1]} · ${daysTo === 0 ? "today" : daysTo === 1 ? "tomorrow" : `in ${daysTo} days`}</div>` : ""}`;
+    }
+    renderCal();
+
+    // ---------- weather + air (Open-Meteo, no key) ----------
+    const WCODE = { 0: "Clear", 1: "Mostly clear", 2: "Partly cloudy", 3: "Overcast", 45: "Fog", 48: "Icy fog", 51: "Drizzle", 53: "Drizzle", 55: "Drizzle", 61: "Light rain", 63: "Rain", 65: "Heavy rain", 71: "Light snow", 73: "Snow", 75: "Heavy snow", 77: "Snow grains", 80: "Showers", 81: "Showers", 82: "Heavy showers", 85: "Snow showers", 86: "Snow showers", 95: "Thunderstorm", 96: "Thunderstorm", 99: "Thunderstorm" };
+    async function loadWeather() {
+      try {
+        const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,apparent_temperature,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min&forecast_days=1&timezone=auto`);
+        const d = await r.json(); const c = d.current;
+        $("weather").innerHTML = `<div class="big">${Math.round(c.temperature_2m)}°<small>feels ${Math.round(c.apparent_temperature)}°</small></div>
+          <div class="kv" style="margin-top:8px"><span>${WCODE[c.weather_code] || ""}</span><span>${Math.round(c.wind_speed_10m)} km/h</span></div>
+          <div class="kv"><span>High / low</span><span>${Math.round(d.daily.temperature_2m_max[0])}° / ${Math.round(d.daily.temperature_2m_min[0])}°</span></div>`;
+      } catch (_) { $("weather").innerHTML = `<span class="muted">Weather unavailable (offline?)</span>`; }
+    }
+    // European AQI bands: 0–20 good, 20–40 fair, 40–60 moderate, 60–80 poor, 80–100 very poor, 100+ extremely poor
+    function aqiBand(v) {
+      return v <= 20 ? ["Good", "var(--good)", "Enjoy the outdoors."] : v <= 40 ? ["Fair", "var(--fair)", "Fine for most people."] :
+             v <= 60 ? ["Moderate", "var(--mod)", "Sensitive people: take it easy outside."] : v <= 80 ? ["Poor", "var(--poor)", "Limit long outdoor effort."] :
+             v <= 100 ? ["Very poor", "var(--vpoor)", "Stay indoors if you can; mask outside."] : ["Extremely poor", "var(--xpoor)", "Avoid outdoor activity."];
+    }
+    async function loadAir() {
+      try {
+        const r = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${LAT}&longitude=${LON}&current=european_aqi,pm2_5,pm10&timezone=auto`);
+        const c = (await r.json()).current;
+        const [label, color, advice] = aqiBand(c.european_aqi);
+        $("air").innerHTML = `<div class="big">${Math.round(c.european_aqi)}<small>European AQI</small></div>
+          <div style="margin:8px 0 6px"><span class="pill" style="background:${color}">${label}</span></div>
+          <div class="kv"><span>PM2.5 / PM10</span><span>${Math.round(c.pm2_5)} / ${Math.round(c.pm10)} µg/m³</span></div>
+          <div class="muted">${advice}</div>`;
+      } catch (_) { $("air").innerHTML = `<span class="muted">Air quality unavailable (offline?)</span>`; }
+    }
+    async function loadRates() {
+      try {
+        const d = await (await fetch("https://open.er-api.com/v6/latest/KZT")).json();
+        const row = (label, code, amt = 1) => `<div class="kv"><span>${label}</span><span>${(amt / d.rates[code]).toFixed(2)} ₸</span></div>`;
+        $("rates").innerHTML = row("1 US dollar", "USD") + row("1 euro", "EUR") + row("100 rubles", "RUB", 100) + row("1 yuan", "CNY") +
+          `<div class="muted" style="margin-top:6px">market rate · ${new Date(d.time_last_update_utc).toLocaleDateString("en-GB")}</div>`;
+      } catch (_) { $("rates").innerHTML = `<span class="muted">Rates unavailable (offline?)</span>`; }
+    }
+    loadWeather(); loadAir(); loadRates();
+
+    // ---------- focus note ----------
+    try { $("focus").value = localStorage.getItem("focus") || ""; } catch (_) {}
+    $("focus").addEventListener("input", () => { try { localStorage.setItem("focus", $("focus").value); } catch (_) {} });
+
+    // ---------- links ----------
+    let mine = [];
+    try { mine = JSON.parse(localStorage.getItem("mylinks") || "[]"); } catch (_) {}
+    const saveMine = () => { try { localStorage.setItem("mylinks", JSON.stringify(mine)); } catch (_) {} };
+    function renderLinks() {
+      for (const [group, list] of Object.entries({ ...LINKS, mine })) {
+        const el = document.querySelector(`[data-group="${group}"]`);
+        el.innerHTML = list.map(([name, url, note], i) =>
+          `<a class="link" href="${url}" data-text="${(name + " " + note).toLowerCase()}">${group === "mine" ? `<a class="del" href="#" data-del="${i}" title="remove">✕</a>` : ""}<strong>${name}</strong><span>${note || url.replace(/^https?:\/\//, "")}</span></a>`).join("");
+      }
+    }
+    renderLinks();
+    $("add").addEventListener("click", () => {
+      const name = $("add-name").value.trim(), url = $("add-url").value.trim(), note = $("add-note").value.trim();
+      if (!name || !/^https?:\/\//.test(url)) return;
+      mine.push([name, url, note]); saveMine(); renderLinks();
+      $("add-name").value = $("add-url").value = $("add-note").value = "";
+    });
+    document.querySelector('[data-group="mine"]').addEventListener("click", e => {
+      if (e.target.dataset.del !== undefined) { e.preventDefault(); e.stopPropagation(); mine.splice(+e.target.dataset.del, 1); saveMine(); renderLinks(); }
+    });
+
+    // ---------- search: filters links; Enter with no match opens a web search ----------
+    $("q").addEventListener("input", () => {
+      const q = $("q").value.trim().toLowerCase();
+      document.querySelectorAll(".link").forEach(a => a.classList.toggle("hidden", q && !a.dataset.text.includes(q)));
+    });
+    $("q").addEventListener("keydown", e => {
+      if (e.key !== "Enter") return;
+      const first = document.querySelector(".link:not(.hidden)");
+      const q = $("q").value.trim();
+      if (q && first && $("q").value.trim().length > 1 && document.querySelectorAll(".link:not(.hidden)").length < document.querySelectorAll(".link").length) location.href = first.href;
+      else if (q) location.href = "https://duckduckgo.com/?q=" + encodeURIComponent(q);
+    });
+  </script>
+</body>
+</html>
