@@ -1,6 +1,6 @@
 # Start page
 
-My browser home page: the Astana clock, today's weather and air quality,
+My browser homepage: the Astana clock, today's weather and air quality,
 tenge exchange rates, working days left in the month and the next day off,
 a "today's focus" note, and one-click links to every tool and directory I've
 built, plus the public services I use most. Served at https://ktwyw.github.io/
@@ -9,7 +9,7 @@ Plain HTML, CSS and JavaScript in one file. Weather and air quality come from
 Open-Meteo (no key), rates from open.er-api.com, and the holiday rules are the
 same as in [kz-workdays](https://github.com/ktwyw/kz-workdays).
 
-## Set it as your home page
+## Set it as your homepage
 
 - **Chrome / Edge:** Settings → On startup → "Open a specific page" →
   `https://ktwyw.github.io/`. Also Settings → Appearance → "Show home button".
