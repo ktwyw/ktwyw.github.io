@@ -208,8 +208,14 @@
       const last = mk(t.y, t.m + 1, 0);
       let left = 0; for (let d = today; d <= last; d = plus(d, 1)) if (isWorking(d)) left++;
       let total = 0; for (let d = mk(t.y, t.m, 1); d <= last; d = plus(d, 1)) if (isWorking(d)) total++;
+      // First day off on or after today, searching this year then next; stop at the first hit.
       let next = null;
-      for (const y of [t.y, t.y + 1]) for (const [k, n] of holidays(y)) { const d = new Date(k + "T00:00:00Z"); if (d >= today && !wk(d)) { next = [d, n]; break; } if (next) break; }
+      search: for (const y of [t.y, t.y + 1]) {
+        for (const [k, n] of holidays(y)) {
+          const d = new Date(k + "T00:00:00Z");
+          if (d >= today && !wk(d)) { next = [d, n]; break search; }
+        }
+      }
       const todayName = holidays(t.y).get(key(today));
       const daysTo = next ? Math.round((next[0] - today) / 86400000) : null;
       $("cal").innerHTML = `

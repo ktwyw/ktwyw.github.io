@@ -22,12 +22,22 @@ same as in [kz-workdays](https://github.com/ktwyw/kz-workdays).
   match, or, if nothing matches, to run a web search.
 - The focus note and the "My links" section are saved in the browser only.
 - Air quality uses the European AQI scale (0–20 good … 100+ extremely poor)
-  with PM2.5 and PM10 shown underneath.
+  with PM2.5 and PM10 shown underneath. The value is Open-Meteo's model
+  estimate for Astana; it's a citywide picture, not a street-level sensor.
+- "Next day off" is the first public holiday or moved day off on or after
+  today, looking at this year and next. Holidays that fall on a weekend are
+  shown by their moved day (e.g. Republic Day, Sun 25 Oct 2026 → Mon 26 Oct).
 
 ## Editing the links
 
 The `LINKS` object near the top of the script has three groups (tools,
 directories, public services). Each entry is `[name, url, note]`.
+
+## Changelog
+
+- 2026-09-21 — fixed "next day off" skipping past October and December
+  holidays to New Year (the search didn't stop at the first match).
+- 2026-09-20 — first version.
 
 ## Ideas for next steps
 
